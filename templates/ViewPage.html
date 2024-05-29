@@ -1,0 +1,66 @@
+<!-- myapp/templates/myapp/anchor_tag_info.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anchor Tag Info</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .clear-button {
+            margin: 20px 0;
+        }
+    </style>
+    <script>
+        function clearTable() {
+            document.getElementById('data-table-body').innerHTML = '';
+        }
+    </script>
+</head>
+<body>
+    <h1>Anchor Tag Info</h1>
+    <button class="clear-button" onclick="clearTable()">Clear</button>
+    <table>
+        <thead>
+            <tr>
+                <th>Anchor ID</th>
+                <th>Device ID</th>
+                <th>TimeStampUTC</th>
+                <th>Distance</th>
+            </tr>
+        </thead>
+        <tbody id="data-table-body">
+            {% for anchor in data %}
+                <tr>
+                    <th colspan="4">{{ anchor.anchorID }}</th>
+                </tr>
+                <tr>
+                    <th></th>
+                    <th>Device ID</th>
+                    <th>TimeStampUTC</th>
+                    <th>Distance</th>
+                </tr>
+                {% for tag_distance in anchor.tag_distances %}
+                    <tr>
+                        <td></td>
+                        <td>{{ tag_distance.deviceID }}</td>
+                        <td>{{ tag_distance.TimeStampUTC }}</td>
+                        <td>{{ tag_distance.distance }}</td>
+                    </tr>
+                {% endfor %}
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

@@ -1,7 +1,7 @@
 from django.db import models
 
 class Anchor(models.Model):
-    anchorID = models.CharField(max_length=50, unique=True)
+    anchorID = models.CharField(max_length=50)
 
     def __str__(self):
         return self.anchorID

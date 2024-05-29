@@ -16,3 +16,17 @@ class AnchorTagInfoView(APIView):
         anchors = Anchor.objects.all()
         serializer = AnchorSerializer(anchors, many=True)
         return Response(serializer.data)
+
+
+# myapp/views.py
+import requests  # Add this import statement
+from django.shortcuts import render
+
+def anchor_tag_info(request):
+    # Fetch data from the API
+    api_url = 'http://127.0.0.1:8000/api/anchor-tag-info/'
+    response = requests.get(api_url)
+    data = response.json()
+
+    # Pass data to the template
+    return render(request, 'ViewPage.html', {'data': data})
