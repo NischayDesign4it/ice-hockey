@@ -17,15 +17,17 @@ class TagDistance(models.Model):
 
 
 
+from django.db import models
+
+class Transmitter(models.Model):
+    transmitterSerialNumber = models.CharField(max_length=20)
+    nodeType = models.CharField(max_length=20)
+    allCount = models.IntegerField()
+
 class Read(models.Model):
+    transmitter = models.ForeignKey(Transmitter, related_name='reads', on_delete=models.CASCADE)
     timeStampUTC = models.CharField(max_length=20)
     deviceUID = models.CharField(max_length=20)
     manufacturerName = models.CharField(max_length=100)
     distance = models.IntegerField()
     count = models.IntegerField()
-
-class Transmitter(models.Model):
-    transmitterSerialNumber = models.CharField(max_length=20)
-    nodeType = models.CharField(max_length=20)
-    reads = models.ManyToManyField(Read)
-    allCount = models.IntegerField()
