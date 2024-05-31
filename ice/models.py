@@ -14,3 +14,18 @@ class TagDistance(models.Model):
 
     def __str__(self):
         return f'{self.deviceID} - {self.distance}m'
+
+
+
+class Read(models.Model):
+    timeStampUTC = models.CharField(max_length=20)
+    deviceUID = models.CharField(max_length=20)
+    manufacturerName = models.CharField(max_length=100)
+    distance = models.IntegerField()
+    count = models.IntegerField()
+
+class Transmitter(models.Model):
+    transmitterSerialNumber = models.CharField(max_length=20)
+    nodeType = models.CharField(max_length=20)
+    reads = models.ManyToManyField(Read)
+    allCount = models.IntegerField()
