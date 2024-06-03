@@ -6,6 +6,6 @@ from . import views
 urlpatterns = [
 
 
-    path('transmitters/', views.create_transmitter),
+    path('/transmitters/?apiKey=default-api-key', views.create_transmitter),
     path('', views.transmitter_list),
 ]
