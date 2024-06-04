@@ -17,11 +17,18 @@
         th {
             background-color: #f2f2f2;
         }
+        button {
+            margin-bottom: 8px;
+        }
     </style>
 </head>
 <body>
+
     <h1>Transmitter List</h1>
-    <table>
+
+    <button type="button" id="clearButton">Clear</button>
+
+    <table id="transmitterTable">
         <thead>
             <tr>
                 <th>Serial Number</th>
@@ -64,5 +71,13 @@
             {% endfor %}
         </tbody>
     </table>
+
+    <script>
+        document.getElementById("clearButton").addEventListener("click", function() {
+            // Clear the table body content
+            var tableBody = document.querySelector("#transmitterTable tbody");
+            tableBody.innerHTML = "";
+        });
+    </script>
 </body>
 </html>

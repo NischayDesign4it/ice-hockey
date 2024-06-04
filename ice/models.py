@@ -8,7 +8,7 @@ class Transmitter(models.Model):
 
 class Read(models.Model):
     transmitter = models.ForeignKey(Transmitter, related_name='reads', on_delete=models.CASCADE)
-    timeStampUTC = models.CharField(max_length=20)
+    timestamp = models.DateTimeField(auto_now_add=True)
     deviceUID = models.CharField(max_length=20)
     manufacturerName = models.CharField(max_length=100)
     distance = models.IntegerField(null=True, blank=True)
