@@ -1,83 +1,70 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transmitter List</title>
+    <title>Device Distances</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #dddddd;
         }
         th, td {
-            border: 1px solid #dddddd;
-            text-align: left;
             padding: 8px;
+            text-align: center;
         }
         th {
             background-color: #f2f2f2;
         }
-        button {
-            margin-bottom: 8px;
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        form {
+            display: inline;
         }
     </style>
 </head>
 <body>
-
-    <h1>Transmitter List</h1>
-
-    <button type="button" id="clearButton">Clear</button>
-
-    <table id="transmitterTable">
+    <h1>Device Distances</h1>
+    <table>
         <thead>
             <tr>
-                <th>Serial Number</th>
-                <th>Node Type</th>
-                <th>All Count</th>
-                <th>Reads</th>
+                <th>Device UID</th>
+                <th>Timestamp UTC</th>
+                <th>Distance 1</th>
+                <th>Distance 2</th>
+                <th>Distance 3</th>
+                <th>Distance 4</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
-            {% for transmitter in transmitters %}
+            {% for read in aggregated_reads %}
             <tr>
-                <td>{{ transmitter.transmitterSerialNumber }}</td>
-                <td>{{ transmitter.nodeType }}</td>
-                <td>{{ transmitter.allCount }}</td>
+                <td>{{ read.deviceUID }}</td>
+                <td>{{ read.timeStampUTC }}</td>
+                <td>{{ read.distance1|default:"N/A" }}</td>
+                <td>{{ read.distance2|default:"N/A" }}</td>
+                <td>{{ read.distance3|default:"N/A" }}</td>
+                <td>{{ read.distance4|default:"N/A" }}</td>
                 <td>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Time Stamp</th>
-                                <th>Device UID</th>
-                                <th>Manufacturer Name</th>
-                                <th>Distance</th>
-                                <th>Count</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for read in transmitter.reads.all %}
-                            <tr>
-                                <td>{{ read.timeStampUTC }}</td>
-                                <td>{{ read.deviceUID }}</td>
-                                <td>{{ read.manufacturerName }}</td>
-                                <td>{{ read.distance }}</td>
-                                <td>{{ read.count }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                    <form action="{% url 'delete_read' read.deviceUID %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit">Delete</button>
+                    </form>
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-
-    <script>
-        document.getElementById("clearButton").addEventListener("click", function() {
-            // Clear the table body content
-            var tableBody = document.querySelector("#transmitterTable tbody");
-            tableBody.innerHTML = "";
-        });
-    </script>
 </body>
 </html>

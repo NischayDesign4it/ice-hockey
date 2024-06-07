@@ -8,4 +8,5 @@ urlpatterns = [
 
     path('transmitters/', views.create_transmitter),
     path('', views.transmitter_list),
+    path('delete/<str:device_uid>/', views.delete_read, name='delete_read'),
 ]

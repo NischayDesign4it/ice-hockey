@@ -1,9 +1,9 @@
 from django.db import models
 
-
 class Transmitter(models.Model):
     transmitterSerialNumber = models.CharField(max_length=20)
     nodeType = models.CharField(max_length=20)
+    nodeSerialNumber = models.CharField(max_length=20, null=True, blank=True)
     allCount = models.IntegerField(null=True, blank=True)
 
 class Read(models.Model):
@@ -11,9 +11,8 @@ class Read(models.Model):
     timeStampUTC = models.DateTimeField(auto_now_add=True)
     deviceUID = models.CharField(max_length=20)
     manufacturerName = models.CharField(max_length=100)
-    distance = models.IntegerField(null=True, blank=True)
+    distance1 = models.IntegerField(null=True, blank=True)
+    distance2 = models.IntegerField(null=True, blank=True)
+    distance3 = models.IntegerField(null=True, blank=True)
+    distance4 = models.IntegerField(null=True, blank=True)
     count = models.IntegerField(null=True, blank=True)
-
-
-
-
