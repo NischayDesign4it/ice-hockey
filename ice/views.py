@@ -77,9 +77,9 @@ def transmitter_list(request):
             device_data[read.deviceUID]['distance1'] = read.distance1 if read.distance1 is not None else device_data[read.deviceUID]['distance1']
         elif read.transmitter.transmitterSerialNumber == '1000DF':
             device_data[read.deviceUID]['distance2'] = read.distance2 if read.distance2 is not None else device_data[read.deviceUID]['distance2']
-        elif read.transmitter.transmitterSerialNumber == '1000AB':
+        elif read.transmitter.transmitterSerialNumber == '10012B':
             device_data[read.deviceUID]['distance3'] = read.distance3 if read.distance3 is not None else device_data[read.deviceUID]['distance3']
-        elif read.transmitter.transmitterSerialNumber == '1000XY':
+        elif read.transmitter.transmitterSerialNumber == '1000ED':
             device_data[read.deviceUID]['distance4'] = read.distance4 if read.distance4 is not None else device_data[read.deviceUID]['distance4']
 
         if read.timeStampUTC > device_data[read.deviceUID]['timeStampUTC']:
