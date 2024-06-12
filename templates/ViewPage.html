@@ -51,7 +51,7 @@
             {% for read in aggregated_reads %}
             <tr>
                 <td>{{ read.deviceUID }}</td>
-                <td>{{ read.timeStampUTC }}</td>
+                <td>{{ read.timeStampUTC|date:'Y-m-d H:i:s' }}</td>
                 <td>{{ read.distance1|default:"N/A" }}</td>
                 <td>{{ read.distance2|default:"N/A" }}</td>
                 <td>{{ read.distance3|default:"N/A" }}</td>
@@ -66,5 +66,11 @@
             {% endfor %}
         </tbody>
     </table>
+
+    <script>
+        setInterval(function() {
+            location.reload();
+        }, 2000); // Reload the page every 2000 milliseconds (2 seconds)
+    </script>
 </body>
 </html>
