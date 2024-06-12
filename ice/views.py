@@ -21,37 +21,6 @@ from django.shortcuts import render, redirect, HttpResponseRedirect
 
 
 
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework import status
-import json
-from .models import Transmitter
-from .serializers import TransmitterSerializer
-
-# @api_view(['POST'])
-# def create_transmitter(request):
-#     if request.method == 'POST':
-#         try:
-#             data = json.loads(request.body)
-#             transmitter_serial_number = data.get('transmitterSerialNumber', '')
-#             existing_transmitter = Transmitter.objects.filter(transmitterSerialNumber=transmitter_serial_number).first()
-#
-#             if existing_transmitter:
-#                 serializer = TransmitterSerializer(existing_transmitter, data=data)
-#             else:
-#                 serializer = TransmitterSerializer(data=data)
-#
-#             if serializer.is_valid():
-#                 serializer.save()
-#                 return Response(serializer.data, status=status.HTTP_200_OK if existing_transmitter else status.HTTP_201_CREATED)
-#             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-#
-#         except Exception as e:
-#             return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-#
-#     return Response({'message': 'Method not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
-#
-
 
 from django.utils import timezone
 
@@ -94,9 +63,6 @@ def update_read_timestamp(reads):
         read.save()
 
 
-from django.shortcuts import render, redirect
-from .models import Read
-from django.http import HttpResponse
 
 def transmitter_list(request):
     reads = Read.objects.all()
