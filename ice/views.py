@@ -22,6 +22,9 @@ from django.shortcuts import render, redirect, HttpResponseRedirect
 
 
 
+import json
+
+
 from django.utils import timezone
 
 
@@ -61,6 +64,7 @@ def update_read_timestamp(reads):
     for read in reads:
         read.timeStampUTC = current_timestamp
         read.save()
+
 
 
 
