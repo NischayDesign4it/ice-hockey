@@ -99,42 +99,23 @@ def create_transmitter(request):
 
 
 
-def transmitter_list(request):
-    reads = Read.objects.all()
-    device_data = {}
-
-    for read in reads:
-        if read.deviceUID not in device_data:
-            device_data[read.deviceUID] = {
-                'deviceUID': read.deviceUID,
-                'distance1': None,
-                'distance2': None,
-                'distance3': None,
-                'distance4': None,
-                'timeStampUTC': read.timeStampUTC
-            }
-
-        if read.transmitter.transmitterSerialNumber == '1000CB':
-            device_data[read.deviceUID]['distance1'] = read.distance1 if read.distance1 is not None else device_data[read.deviceUID]['distance1']
-        elif read.transmitter.transmitterSerialNumber == '1000DF':
-            device_data[read.deviceUID]['distance2'] = read.distance2 if read.distance2 is not None else device_data[read.deviceUID]['distance2']
-        elif read.transmitter.transmitterSerialNumber == '10012B':
-            device_data[read.deviceUID]['distance3'] = read.distance3 if read.distance3 is not None else device_data[read.deviceUID]['distance3']
-        elif read.transmitter.transmitterSerialNumber == '1000ED':
-            device_data[read.deviceUID]['distance4'] = read.distance4 if read.distance4 is not None else device_data[read.deviceUID]['distance4']
-
-        if read.timeStampUTC > device_data[read.deviceUID]['timeStampUTC']:
-            device_data[read.deviceUID]['timeStampUTC'] = read.timeStampUTC
-
-    aggregated_reads = list(device_data.values())
-
-    return render(request, 'ViewPage.html', {'aggregated_reads': aggregated_reads})
 
 def delete_read(request, device_uid):
     reads = Read.objects.filter(deviceUID=device_uid)
     if reads.exists():
         reads.delete()
     return HttpResponseRedirect('/')
+
+
+from django.shortcuts import render
+from datetime import datetime, timedelta
+
+def transmitter_list(request):
+    current_time = datetime.utcnow()
+    threshold_time = current_time - timedelta(seconds=10)
+    filtered_reads = Read.objects.filter(timeStampUTC__gte=threshold_time)
+    return render(request, 'ViewPage.html', {'filtered_reads': filtered_reads})
+
 
 
 

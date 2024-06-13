@@ -48,7 +48,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for read in aggregated_reads %}
+            {% for read in filtered_reads %}
             <tr>
                 <td>{{ read.deviceUID }}</td>
                 <td>{{ read.timeStampUTC|date:'Y-m-d H:i:s' }}</td>
@@ -66,8 +66,7 @@
             {% endfor %}
         </tbody>
     </table>
-
-    <script>
+ <script>
         setInterval(function() {
             location.reload();
         }, 2000); // Reload the page every 2000 milliseconds (2 seconds)
@@ -148,10 +147,10 @@
 <!--        </tbody>-->
 <!--    </table>-->
 
-<!--    <script>-->
-<!--        setInterval(function() {-->
-<!--            location.reload();-->
-<!--        }, 2000); // Reload the page every 2000 milliseconds (2 seconds)-->
-<!--    </script>-->
+    <script>
+        setInterval(function() {
+            location.reload();
+        }, 2000); // Reload the page every 2000 milliseconds (2 seconds)
+    </script>
 <!--</body>-->
 <!--</html>-->
