@@ -35,7 +35,7 @@
 </head>
 <body>
     <h1>Device Distances</h1>
-    <table>
+    <table id="distanceTable">
         <thead>
             <tr>
                 <th>Device UID</th>
@@ -45,20 +45,21 @@
                 <th>Distance 3</th>
                 <th>Distance 4</th>
                 <th>Position</th>
-
-                <th>Action</th>
+                <th>Status</th>
+                <th>Action</th> <!-- New column for Active/Inactive -->
             </tr>
         </thead>
         <tbody>
             {% for read in aggregated_reads %}
-            <tr>
+            <tr id="row-{{ forloop.counter }}">
                 <td>{{ read.deviceUID }}</td>
-                <td>{{ read.timeStampUTC|date:'Y-m-d H:i:s' }}</td>
+                <td class="timestamp">{{ read.timeStampUTC|date:'Y-m-d H:i:s' }}</td>
                 <td>{{ read.distance1|default:"N/A" }}</td>
                 <td>{{ read.distance2|default:"N/A" }}</td>
                 <td>{{ read.distance3|default:"N/A" }}</td>
                 <td>{{ read.distance4|default:"N/A" }}</td>
                 <td>{{ read.position|default:"N/A" }}</td>
+                <td class="action-column">Inactive</td> <!-- Initially set to Inactive -->
                 <td>
                     <form action="{% url 'delete_read' read.deviceUID %}" method="POST">
                         {% csrf_token %}
@@ -71,9 +72,42 @@
     </table>
 
     <script>
-        setInterval(function() {
-            location.reload();
-        }, 2000); // Reload the page every 2000 milliseconds (2 seconds)
+        // JavaScript to check timestamp changes and update action column
+        function checkTimestampChanges() {
+            let tableRows = document.querySelectorAll('#distanceTable tbody tr');
+
+            tableRows.forEach(row => {
+                let timestampCell = row.querySelector('.timestamp');
+                let actionCell = row.querySelector('.action-column');
+
+                // Parse the timestamp as UTC
+                let timestampString = timestampCell.textContent.trim() + "Z";
+                let readTimestamp = new Date(timestampString); // Treat as UTC by appending 'Z'
+
+                // Get current time in UTC
+                let currentTime = new Date(new Date().toISOString());
+
+                // Print old timestamp and current time in UTC
+                console.log(`Old Time (UTC): ${readTimestamp.toISOString()}`);
+                console.log(`Current Time (UTC): ${currentTime.toISOString()}`);
+
+                // Calculate the difference in minutes
+                let differenceInMinutes = (currentTime - readTimestamp) / 60000;
+
+                if (differenceInMinutes > 1) {
+                    actionCell.textContent = 'Inactive';
+                } else {
+                    actionCell.textContent = 'Active';
+                }
+            });
+        }
+
+        // Run initially and then every 2 seconds
+        checkTimestampChanges();
+        setInterval(() => {
+            checkTimestampChanges();
+            location.reload(); // Reload the page every 2 seconds
+        }, 2000);
     </script>
 </body>
 </html>
