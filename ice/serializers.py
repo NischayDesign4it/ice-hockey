@@ -2,14 +2,12 @@ from rest_framework import serializers
 from .models import Transmitter, Read
 from django.utils import timezone
 
-
 class ReadSerializer(serializers.ModelSerializer):
     distance = serializers.IntegerField(write_only=True, required=False)
 
     class Meta:
         model = Read
-        fields = ['timeStampUTC', 'deviceUID', 'manufacturerName', 'distance', 'distance1', 'distance2', 'distance3',
-                  'distance4', 'count']
+        fields = ['timeStampUTC', 'deviceUID', 'manufacturerName', 'distance', 'distance1', 'distance2', 'distance3', 'distance4', 'count']
         extra_kwargs = {
             'count': {'required': False},
             'distance1': {'required': False},
@@ -17,14 +15,6 @@ class ReadSerializer(serializers.ModelSerializer):
             'distance3': {'required': False},
             'distance4': {'required': False}
         }
-
-    def update(self, instance, validated_data):
-        distance = validated_data.get('distance', instance.distance)
-        if distance is not None:
-            instance.timeStampUTC = timezone.now()
-            instance.distance = distance
-        return instance
-
 
 class TransmitterSerializer(serializers.ModelSerializer):
     reads = ReadSerializer(many=True)
@@ -50,19 +40,29 @@ class TransmitterSerializer(serializers.ModelSerializer):
                     read_data['distance4'] = distance
             Read.objects.create(transmitter=transmitter, deviceUID=device_uid, **read_data)
         return transmitter
-
     def update(self, instance, validated_data):
         reads_data = validated_data.pop('reads', None)
+
         if reads_data:
             for read_data in reads_data:
                 device_uid = read_data.pop('deviceUID')
                 distance = read_data.pop('distance', None)
+
                 existing_read = instance.reads.filter(deviceUID=device_uid).first()
 
                 if existing_read:
+                    if distance is not None:
+                        if instance.transmitterSerialNumber == '1000CB':
+                            existing_read.distance1 = distance
+                        elif instance.transmitterSerialNumber == '1000DF':
+                            existing_read.distance2 = distance
+                        elif instance.transmitterSerialNumber == '10012B':
+                            existing_read.distance3 = distance
+                        elif instance.transmitterSerialNumber == '1000ED':
+                            existing_read.distance4 = distance
+
                     for key, value in read_data.items():
                         setattr(existing_read, key, value)
-                    existing_read.save()
 
                     # Update timeStampUTC for this specific deviceUID
                     existing_read.timeStampUTC = timezone.now()
@@ -78,6 +78,10 @@ class TransmitterSerializer(serializers.ModelSerializer):
                             read_data['distance3'] = distance
                         elif instance.transmitterSerialNumber == '1000ED':
                             read_data['distance4'] = distance
+
+                    # Set timeStampUTC for new read_data
+                    read_data['timeStampUTC'] = timezone.now()
+
                     Read.objects.create(transmitter=instance, deviceUID=device_uid, **read_data)
 
         instance.transmitterSerialNumber = validated_data.get('transmitterSerialNumber',
@@ -88,3 +92,46 @@ class TransmitterSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
+
+    # def update(self, instance, validated_data):
+    #     reads_data = validated_data.pop('reads', None)
+    #     if reads_data:
+    #         for read_data in reads_data:
+    #             device_uid = read_data.pop('deviceUID')
+    #             distance = read_data.pop('distance', None)
+    #             timestamp_utc = read_data.pop('timeStampUTC', None)  # Extract timeStampUTC if present
+    #             existing_read = instance.reads.filter(deviceUID=device_uid).first()
+    #             if existing_read:
+    #                 if distance is not None:
+    #                     if instance.transmitterSerialNumber == '1000CB':
+    #                         existing_read.distance1 = distance
+    #                     elif instance.transmitterSerialNumber == '1000DF':
+    #                         existing_read.distance2 = distance
+    #                     elif instance.transmitterSerialNumber == '10012B':
+    #                         existing_read.distance3 = distance
+    #                     elif instance.transmitterSerialNumber == '1000ED':
+    #                         existing_read.distance4 = distance
+    #                 if timestamp_utc is not None:
+    #                     existing_read.timeStampUTC = timestamp_utc  # Update timeStampUTC
+    #                 for key, value in read_data.items():
+    #                     setattr(existing_read, key, value)
+    #                 existing_read.save()
+    #             else:
+    #                 if distance is not None:
+    #                     if instance.transmitterSerialNumber == '1000CB':
+    #                         read_data['distance1'] = distance
+    #                     elif instance.transmitterSerialNumber == '1000DF':
+    #                         read_data['distance2'] = distance
+    #                     elif instance.transmitterSerialNumber == '10012B':
+    #                         read_data['distance3'] = distance
+    #                     elif instance.transmitterSerialNumber == '1000ED':
+    #                         read_data['distance4'] = distance
+    #                 if timestamp_utc is not None:
+    #                     read_data['timeStampUTC'] = timestamp_utc  # Add timeStampUTC to new read_data
+    #                 Read.objects.create(transmitter=instance, deviceUID=device_uid, **read_data)
+    #     instance.transmitterSerialNumber = validated_data.get('transmitterSerialNumber', instance.transmitterSerialNumber)
+    #     instance.nodeType = validated_data.get('nodeType', instance.nodeType)
+    #     instance.nodeSerialNumber = validated_data.get('nodeSerialNumber', instance.nodeSerialNumber)
+    #     instance.allCount = validated_data.get('allCount', instance.allCount)
+    #     instance.save()
+    #     return instance
