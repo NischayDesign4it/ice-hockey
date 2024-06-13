@@ -44,6 +44,8 @@
                 <th>Distance 2</th>
                 <th>Distance 3</th>
                 <th>Distance 4</th>
+                <th>Position</th>
+
                 <th>Action</th>
             </tr>
         </thead>
@@ -56,6 +58,7 @@
                 <td>{{ read.distance2|default:"N/A" }}</td>
                 <td>{{ read.distance3|default:"N/A" }}</td>
                 <td>{{ read.distance4|default:"N/A" }}</td>
+                <td>{{ read.position|default:"N/A" }}</td>
                 <td>
                     <form action="{% url 'delete_read' read.deviceUID %}" method="POST">
                         {% csrf_token %}
