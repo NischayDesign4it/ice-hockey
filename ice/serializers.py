@@ -1,12 +1,15 @@
 from rest_framework import serializers
 from .models import Transmitter, Read
+from django.utils import timezone
+
 
 class ReadSerializer(serializers.ModelSerializer):
     distance = serializers.IntegerField(write_only=True, required=False)
 
     class Meta:
         model = Read
-        fields = ['timeStampUTC', 'deviceUID', 'manufacturerName', 'distance', 'distance1', 'distance2', 'distance3', 'distance4', 'count']
+        fields = ['timeStampUTC', 'deviceUID', 'manufacturerName', 'distance', 'distance1', 'distance2', 'distance3',
+                  'distance4', 'count']
         extra_kwargs = {
             'count': {'required': False},
             'distance1': {'required': False},
@@ -14,6 +17,14 @@ class ReadSerializer(serializers.ModelSerializer):
             'distance3': {'required': False},
             'distance4': {'required': False}
         }
+
+    def update(self, instance, validated_data):
+        distance = validated_data.get('distance', instance.distance)
+        if distance is not None:
+            instance.timeStampUTC = timezone.now()
+            instance.distance = distance
+        return instance
+
 
 class TransmitterSerializer(serializers.ModelSerializer):
     reads = ReadSerializer(many=True)
@@ -47,19 +58,16 @@ class TransmitterSerializer(serializers.ModelSerializer):
                 device_uid = read_data.pop('deviceUID')
                 distance = read_data.pop('distance', None)
                 existing_read = instance.reads.filter(deviceUID=device_uid).first()
+
                 if existing_read:
-                    if distance is not None:
-                        if instance.transmitterSerialNumber == '1000CB':
-                            existing_read.distance1 = distance
-                        elif instance.transmitterSerialNumber == '1000DF':
-                            existing_read.distance2 = distance
-                        elif instance.transmitterSerialNumber == '10012B':
-                            existing_read.distance3 = distance
-                        elif instance.transmitterSerialNumber == '1000ED':
-                            existing_read.distance4 = distance
                     for key, value in read_data.items():
                         setattr(existing_read, key, value)
                     existing_read.save()
+
+                    # Update timeStampUTC for this specific deviceUID
+                    existing_read.timeStampUTC = timezone.now()
+                    existing_read.save()
+
                 else:
                     if distance is not None:
                         if instance.transmitterSerialNumber == '1000CB':
@@ -71,9 +79,12 @@ class TransmitterSerializer(serializers.ModelSerializer):
                         elif instance.transmitterSerialNumber == '1000ED':
                             read_data['distance4'] = distance
                     Read.objects.create(transmitter=instance, deviceUID=device_uid, **read_data)
-        instance.transmitterSerialNumber = validated_data.get('transmitterSerialNumber', instance.transmitterSerialNumber)
+
+        instance.transmitterSerialNumber = validated_data.get('transmitterSerialNumber',
+                                                              instance.transmitterSerialNumber)
         instance.nodeType = validated_data.get('nodeType', instance.nodeType)
         instance.nodeSerialNumber = validated_data.get('nodeSerialNumber', instance.nodeSerialNumber)
         instance.allCount = validated_data.get('allCount', instance.allCount)
+
         instance.save()
         return instance
