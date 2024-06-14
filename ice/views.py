@@ -96,7 +96,7 @@ def transmitter_list(request):
         d1 = data['distance1']
         d2 = data['distance2']
         if d1 is not None and d2 is not None:
-            l = 10000
+            l = 6700
             value_under_sqrt = (d2 ** 2 - ((l ** 2 - d1 ** 2 + d2 ** 2) ** 2) / (4 * l ** 2))
             if value_under_sqrt >= 0:
                 position = math.sqrt(value_under_sqrt)
