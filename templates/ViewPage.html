@@ -58,7 +58,7 @@
                 <td>{{ read.distance2|default:"N/A" }}</td>
                 <td>{{ read.distance3|default:"N/A" }}</td>
                 <td>{{ read.distance4|default:"N/A" }}</td>
-                <td>{{ read.position|default:"N/A" }}</td>
+                <td>{{ read.position }}</td>
                 <td class="action-column">Inactive</td> <!-- Initially set to Inactive -->
                 <td>
                     <form action="{% url 'delete_read' read.deviceUID %}" method="POST">
@@ -92,7 +92,7 @@
                 console.log(`Current Time (UTC): ${currentTime.toISOString()}`);
 
                 // Calculate the difference in minutes
-                let differenceInMinutes = (currentTime - readTimestamp) / 30000;
+                let differenceInMinutes = (currentTime - readTimestamp) / 10000;
 
                 if (differenceInMinutes > 1) {
                     actionCell.textContent = 'Inactive';
