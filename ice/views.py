@@ -157,16 +157,20 @@ def transmitter_list(request):
 
         # Update distances and their timestamps based on transmitterSerialNumber
         if read.transmitter.transmitterSerialNumber == '1000CB':
-            device_data[device_uid]['distance1'] = read.distance1 if read.distance1 is not None else device_data[device_uid]['distance1']
+            device_data[device_uid]['distance1'] = read.distance1 if read.distance1 is not None else \
+            device_data[device_uid]['distance1']
             device_data[device_uid]['distance1_last_update'] = read.timeStampUTC
         elif read.transmitter.transmitterSerialNumber == '1000DF':
-            device_data[device_uid]['distance2'] = read.distance2 if read.distance2 is not None else device_data[device_uid]['distance2']
+            device_data[device_uid]['distance2'] = read.distance2 if read.distance2 is not None else \
+            device_data[device_uid]['distance2']
             device_data[device_uid]['distance2_last_update'] = read.timeStampUTC
         elif read.transmitter.transmitterSerialNumber == '10012B':
-            device_data[device_uid]['distance3'] = read.distance3 if read.distance3 is not None else device_data[device_uid]['distance3']
+            device_data[device_uid]['distance3'] = read.distance3 if read.distance3 is not None else \
+            device_data[device_uid]['distance3']
             device_data[device_uid]['distance3_last_update'] = read.timeStampUTC
         elif read.transmitter.transmitterSerialNumber == '1000ED':
-            device_data[device_uid]['distance4'] = read.distance4 if read.distance4 is not None else device_data[device_uid]['distance4']
+            device_data[device_uid]['distance4'] = read.distance4 if read.distance4 is not None else \
+            device_data[device_uid]['distance4']
             device_data[device_uid]['distance4_last_update'] = read.timeStampUTC
 
         # Update last timestamp
@@ -183,9 +187,14 @@ def transmitter_list(request):
         if d2 is not None and d3 is not None:
             l = 5000  # Predefined distance
             value_under_sqrt = (d3 ** 2 - ((l ** 2 - d2 ** 2 + d3 ** 2) ** 2) / (4 * l ** 2))
-
             if value_under_sqrt >= 0:
                 position = math.sqrt(value_under_sqrt)
+            elif d2 < 2000:
+                position = d2
+            elif d3 < 2000:
+                position = d3
+
+            if position is not None:
                 data['position'] = position
 
                 if position < 2000:
@@ -214,8 +223,6 @@ def transmitter_list(request):
 
     aggregated_reads = list(device_data.values())
     return render(request, 'ViewPage.html', {'aggregated_reads': aggregated_reads})
-
-
 
 
 def custom_404_view(request, exception):
